@@ -1,5 +1,5 @@
 import Task from "../models/Tasks.js";
-
+import NotFoundError from "../errors/not_found_err.js";
 
 
 
@@ -7,7 +7,8 @@ const getalltasks = async (req, res) => {
   try {
     const tasks = await Task.find();
     if (!tasks) {
-      return res.status(404).json({ error: "Pas de tâches" });
+      const not_found_error = new NotFoundError("No tasks found");
+      return res.status(not_found_error.statusCode).json({ error: not_found_error.message });
     }
     res.status(200).json({ data: tasks });
   } catch (err) {
@@ -20,7 +21,8 @@ const gettaskbyid = async (req, res) => {
     console.log("id:", req.params.id);
     const task = await Task.findById(req.params.id);
     if (!task) {
-      return res.status(404).json({ error: "Tâche introuvable" });
+      const not_found_error = new NotFoundError("Task not found");
+      return res.status(not_found_error.statusCode).json({ error: not_found_error.message });
     }
     res.status(200).json({ data: task });
   } catch (err) {
@@ -44,7 +46,8 @@ const updatetask = async (req, res) => {
       runValidators: true,
     });
     if (!task) {
-      return res.status(404).json({ error: "Tâche introuvable" });
+      const not_found_error = new NotFoundError("Task not found");
+      return res.status(not_found_error.statusCode).json({ error: not_found_error.message });
     }
     res.status(200).json({ data: task });
   } catch (err) {
